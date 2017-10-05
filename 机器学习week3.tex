@@ -1,0 +1,212 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage[boxed]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{float}
+<<<<<<< HEAD
+\usepackage[boxed]{algorithm2e}
+=======
+>>>>>>> 93b780198ae5ded8a8737dd88a4927a7e4c09c32
+%可以用到的所有包
+
+\title{机器学习week3}
+\author{  }
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+\section{Classification}
+
+\paragraph{}
+To attempt classification, one method is to use linear regression and map all predictions greater than 0.5 as a 1 and all less than 0.5 as a 0. However, this method doesn't work well because classification is not actually a linear function.
+\paragraph{}
+The classification problem is just like the regression problem, except that the values we now want to predict take on only a small number of discrete values. For now, we will focus on the \textbf{binary classification} problem in which y can take on only two values, 0 and 1. (Most of what we say here will also generalize to the multiple-class case.) For instance, if we are trying to build a spam classifier for email, then [Math Processing Error] may be some features of a piece of email, and y may be 1 if it is a piece of spam mail, and 0 otherwise. Hence, y∈{0,1}. 0 is also called the negative class, and 1 the positive class, and they are sometimes also denoted by the symbols “-” and “+.” Given [Math Processing Error], the corresponding [Math Processing Error] is also called the label for the training example.
+
+\newpage
+\section{Hypothesis Representation}
+\paragraph{}
+We could approach the classification problem ignoring the fact that y is discrete-valued,and use our old linear regression algotithm to try to predict y given x.However,it is easy to construct examples where this method performs very poorly.Intuitively,it also doesn't make sense for[Math Processing Error]to take values larger than 1 or smaller than 0 when we know that y∈{0, 1}.To fix this,let's change the form for our hypothese[Math Processing Error]to satisfy[Math Processing Error].This is accomplished by plugging [Math Processing Error]into the Logistic Function.
+\paragraph{}
+Our new form uses the "Sigmoid function,"also called the "Logistic Function":
+\paragraph{}
+The following image shows us what the sigmoid function looks like:
+\paragraph{}
+\includegraphics[width=10cm]  {1.png}
+\paragraph{}
+The function g(z),shown here,maps any real number to the (0,1)interval,making it useful for transforming an arbitrary-valued function into a function better suited for classification.
+\paragraph{}
+[Math Processing Error]will give us the \textbf{probability} that our output is 1.For example,[Math Processing Error]gives us a probability of 70$\%$ that our outputs is 1.Our probability that our prediction is 0 is just the complement of our probability that it is 1 (e.g. if probability that it is 1 is 70$\%$,then the probability that it is 30$\%$).
+<<<<<<< HEAD
+\newpage
+\section{Decision Boundary}
+\paragraph{}
+In order to get our discrete 0 or 1 classification,we can translate the output of the hypothesis function as follows:
+\paragraph{}
+\begin{algorithm}  
+\paragraph{}
+$h_{\theta}(x)$ $\geq$ 0.5 $\rightarrow$ y=1
+\paragraph{}
+$h_{\theta}(x)$ $<$ 0.5 $\rightarrow$ y=0
+\end{algorithm}
+\paragraph{}
+The way our logistic function g behaves is that when its input is greater than or equal to zero, its output is greater than or equal to 0.5:
+\begin{algorithm}
+\paragraph{}
+g(z) $\geq$ 0.5
+\paragraph{}
+when z $\geq$ 0
+\end{algorithm}
+\paragraph{}
+Remember.
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+z=0,$e^{0}$=1 $\Rightarrow$ $g(z)$=1/2
+\paragraph{}
+z $\rightarrow$ $\infty$,$e^{-\infty}$ $\rightarrow$ 0 $\Rightarrow$ $g(z)$=1 
+\paragraph{}
+z $\rightarrow$ $-\infty$,$e^{\infty}$ $\rightarrow$ $\infty$ $\Rightarrow$ $g(z)$=0
+\end{algorithm}
+\paragraph{}
+So if our input to g is $\theta^{T}X$, then that means:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$h_{\theta}(x)$ = g($\theta^{T}x$) $\geq$0.5
+\paragraph{}
+when $\theta^{T}x$ $\geq$0
+\end{algorithm}
+\newpage
+\paragraph{}
+From these statements we can now say:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$\theta^{T}$x $\geq$0 $\Rightarrow$ y=1
+\paragraph{}
+$\theta^{T}$x <0 $\Rightarrow$ y=0
+\end{algorithm}
+\paragraph{}
+The \textbf{decision boundary} is the line that separates the area where y = 0 and where y = 1. It is created by our hypothesis function.
+\paragraph{}
+\textbf{Example:}
+\begin{algorithm}
+\begin{eqnarray*}
+\theta=\left[\begin{array}{r}
+5\\
+-1\\
+0
+\end{array}\right]
+\end{eqnarray*}
+\paragraph{}
+y=1 if 5+(-1)$x_{1}$+0$x_{2}$ $\geq$0
+\paragraph{}
+5-$x_{1}$ $\geq$ 0
+\paragraph{}
+-$x_{1}$ $\geq$ -5
+\paragraph{}
+$x_{1}$ $\leqslant$ 5
+\end{algorithm}
+\paragraph{}
+In this case, our decision boundary is a straight vertical line placed on the graph where $x_{1}$=5, and everything to the left of that denotes y = 1, while everything to the right denotes y = 0.
+\paragraph{}
+Again, the input to the sigmoid function $g(z)$ (e.g. $\theta^{T}$X) doesn't need to be linear, and could be a function that describes a circle (e.g. z=$\theta_{0}$+$\theta_{1}$ $x_{1}^{2}$+$\theta_{2}$ $x_{2}^{2}$) or any shape to fit our data.
+\newpage
+\section{Cost Function}
+\paragraph{}
+We cannot use the same cost function that we use for linear regression because the Logistic Function will cause the output to be wavy, causing many local optima. In other words, it will not be a convex function.
+\paragraph{}
+Instead, our cost function for logistic regression looks like:
+\begin{algorithm}
+\paragraph{}
+$J(\theta)$=$\dfrac{1}{m}$ $\sum\limits_{i=1}^{m}$ Cost($h_{\theta}$($x^{(i)}$),$y^{(i)}$)
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-log($h_{\theta}(x)$)\qquad if y=1
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-log(1-$h_{\theta}(x)$)\qquad if y=0
+\end{algorithm}
+\paragraph{}
+When y = 1, we get the following plot for $J(θ)$ vs $h_{\theta}(x)$:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{11.png}
+\newpage
+\paragraph{}
+Similarly, when y = 0, we get the following plot for $J(θ)$ vs $h_{\theta}(x)$:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{12.png}
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+Cost($h_{\theta}$(x),y)=0 \qquad if $h_{\theta}$(x)=y
+\paragraph{}
+Cost($h_{\theta}$(x),y) $\rightarrow$ $\infty$ \qquad if y=0 and $h_{\theta}$(x) $\rightarrow$ 1
+\paragraph{}
+Cost($h_{\theta}$(x),y) $\rightarrow$ $\infty$ \qquad if y=1 and $h_{\theta}$(x) $\rightarrow$ 0
+\end{algorithm}
+\paragraph{}
+If our correct answer 'y' is 0, then the cost function will be 0 if our hypothesis function also outputs 0. If our hypothesis approaches 1, then the cost function will approach infinity.
+\paragraph{}
+If our correct answer 'y' is 1, then the cost function will be 0 if our hypothesis function outputs 1. If our hypothesis approaches 0, then the cost function will approach infinity.
+\paragraph{}
+Note that writing the cost function in this way guarantees that $J(\theta)$ is convex for logistic regression.
+\newpage
+\section{Simplified Cost Function and Gradient Descent}
+\paragraph{}
+\textbf{Note:} [6:53 - the gradient descent equation should have a 1/m factor]
+\paragraph{}
+We can compress our cost function's two conditional cases into one case:
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-y log($h_{\theta}$(x))-(1-y)log(1-$h_{\theta}$(x))
+\paragraph{}
+Notice that when y is equal to 1, then the second term (1−y)log(1−$h_{\theta}(x)$) will be zero and will not affect the result. If y is equal to 0, then the first term −ylog($h_{\theta}(x)$) will be zero and will not affect the result.
+\paragraph{}
+We can fully write out our entire cost function as follows:
+\begin{algorithm}
+J($\theta$)=-$\dfrac{1}{m}$ $\sum\limits_{i=1}^{m}$ [$y^{(i)}$log($h_{\theta}$($x^{(i)}$))+(1-$y^{(i)}$)log(1-$h_{\theta}(x^{(i)}$))]
+\end{algorithm}
+\paragraph{}
+A vectorized implementation is:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+h=g(X$\theta$)
+\paragraph{}
+J($\theta$)=$\dfrac{1}{m}$ $\cdot$ (-$y^{T}$log(h)-$(1-y)^{T}$log(1-h))
+\end{algorithm}
+\subsection{Gradient Descent}
+\paragraph{}
+Remember that the general form of gradient descent is:
+\begin{algorithm}
+\paragraph{}
+Repeat 
+\paragraph{}
+
+$\theta_{j}$:=$\theta_{j}$-$\alpha$ $\dfrac{\partial}{\partial\theta_{j}}$ J($\theta$)
+
+\end{algorithm}
+\paragraph{}
+We can work out the derivative part using calculus to get:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+Repeat 
+\paragraph{}
+$\theta_{j}$:=$\theta_{j}$-$\dfrac{\alpha}{m}$ $\sum\limits_{i=1}^{m}$ ($h_{\theta}(x^{(i)})$-$y^{(i)}$)$x_{j}^{(i)}$
+\end{algorithm}
+\paragraph{}
+Notice that this algorithm is identical to the one we used in linear regression. We still have to simultaneously update all values in theta.
+\paragraph{}
+A vectorized implementation is:
+\paragraph{}
+$\theta$:=$\theta$-$\dfrac{\alpha}{m}$ $X^{T}$ (g(X$\theta$)-$\vec{y}$)
+=======
+>>>>>>> 93b780198ae5ded8a8737dd88a4927a7e4c09c32
+\end{document}
