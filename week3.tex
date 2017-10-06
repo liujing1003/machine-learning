@@ -1,0 +1,393 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage[boxed]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage[boxed]{algorithm2e}
+\usepackage{minted}
+%可以用到的所有包
+
+\title{机器学习week3}
+\author{  }
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+\section{Classification}
+
+\paragraph{}
+To attempt classification, one method is to use linear regression and map all predictions greater than 0.5 as a 1 and all less than 0.5 as a 0. However, this method doesn't work well because classification is not actually a linear function.
+\paragraph{}
+The classification problem is just like the regression problem, except that the values we now want to predict take on only a small number of discrete values. For now, we will focus on the \textbf{binary classification} problem in which y can take on only two values, 0 and 1. (Most of what we say here will also generalize to the multiple-class case.) For instance, if we are trying to build a spam classifier for email, then [Math Processing Error] may be some features of a piece of email, and y may be 1 if it is a piece of spam mail, and 0 otherwise. Hence, y∈{0,1}. 0 is also called the negative class, and 1 the positive class, and they are sometimes also denoted by the symbols “-” and “+.” Given [Math Processing Error], the corresponding [Math Processing Error] is also called the label for the training example.
+
+\newpage
+\section{Hypothesis Representation}
+\paragraph{}
+We could approach the classification problem ignoring the fact that y is discrete-valued,and use our old linear regression algotithm to try to predict y given x.However,it is easy to construct examples where this method performs very poorly.Intuitively,it also doesn't make sense for[Math Processing Error]to take values larger than 1 or smaller than 0 when we know that y∈{0, 1}.To fix this,let's change the form for our hypothese[Math Processing Error]to satisfy[Math Processing Error].This is accomplished by plugging [Math Processing Error]into the Logistic Function.
+\paragraph{}
+Our new form uses the "Sigmoid function,"also called the "Logistic Function":
+\paragraph{}
+The following image shows us what the sigmoid function looks like:
+\paragraph{}
+\includegraphics[width=10cm]  {1.png}
+\paragraph{}
+The function g(z),shown here,maps any real number to the (0,1)interval,making it useful for transforming an arbitrary-valued function into a function better suited for classification.
+\paragraph{}
+[Math Processing Error]will give us the \textbf{probability} that our output is 1.For example,[Math Processing Error]gives us a probability of 70$\%$ that our outputs is 1.Our probability that our prediction is 0 is just the complement of our probability that it is 1 (e.g. if probability that it is 1 is 70$\%$,then the probability that it is 30$\%$).
+\newpage
+\section{Decision Boundary}
+\paragraph{}
+In order to get our discrete 0 or 1 classification,we can translate the output of the hypothesis function as follows:
+\paragraph{}
+\begin{algorithm}  
+\paragraph{}
+$h_{\theta}(x)$ $\geq$ 0.5 $\rightarrow$ y=1
+\paragraph{}
+$h_{\theta}(x)$ $<$ 0.5 $\rightarrow$ y=0
+\end{algorithm}
+\paragraph{}
+The way our logistic function g behaves is that when its input is greater than or equal to zero, its output is greater than or equal to 0.5:
+\begin{algorithm}
+\paragraph{}
+g(z) $\geq$ 0.5
+\paragraph{}
+when z $\geq$ 0
+\end{algorithm}
+\paragraph{}
+Remember.
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+z=0,$e^{0}$=1 $\Rightarrow$ $g(z)$=1/2
+\paragraph{}
+z $\rightarrow$ $\infty$,$e^{-\infty}$ $\rightarrow$ 0 $\Rightarrow$ $g(z)$=1 
+\paragraph{}
+z $\rightarrow$ $-\infty$,$e^{\infty}$ $\rightarrow$ $\infty$ $\Rightarrow$ $g(z)$=0
+\end{algorithm}
+\paragraph{}
+So if our input to g is $\theta^{T}X$, then that means:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$h_{\theta}(x)$ = g($\theta^{T}x$) $\geq$0.5
+\paragraph{}
+when $\theta^{T}x$ $\geq$0
+\end{algorithm}
+\newpage
+\paragraph{}
+From these statements we can now say:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$\theta^{T}$x $\geq$0 $\Rightarrow$ y=1
+\paragraph{}
+$\theta^{T}$x <0 $\Rightarrow$ y=0
+\end{algorithm}
+\paragraph{}
+The \textbf{decision boundary} is the line that separates the area where y = 0 and where y = 1. It is created by our hypothesis function.
+\paragraph{}
+\textbf{Example:}
+\begin{algorithm}
+\begin{eqnarray*}
+\theta=\left[\begin{array}{r}
+5\\
+-1\\
+0
+\end{array}\right]
+\end{eqnarray*}
+\paragraph{}
+y=1 if 5+(-1)$x_{1}$+0$x_{2}$ $\geq$0
+\paragraph{}
+5-$x_{1}$ $\geq$ 0
+\paragraph{}
+-$x_{1}$ $\geq$ -5
+\paragraph{}
+$x_{1}$ $\leqslant$ 5
+\end{algorithm}
+\paragraph{}
+In this case, our decision boundary is a straight vertical line placed on the graph where $x_{1}$=5, and everything to the left of that denotes y = 1, while everything to the right denotes y = 0.
+\paragraph{}
+Again, the input to the sigmoid function $g(z)$ (e.g. $\theta^{T}$X) doesn't need to be linear, and could be a function that describes a circle (e.g. z=$\theta_{0}$+$\theta_{1}$ $x_{1}^{2}$+$\theta_{2}$ $x_{2}^{2}$) or any shape to fit our data.
+\newpage
+\section{Cost Function}
+\paragraph{}
+We cannot use the same cost function that we use for linear regression because the Logistic Function will cause the output to be wavy, causing many local optima. In other words, it will not be a convex function.
+\paragraph{}
+Instead, our cost function for logistic regression looks like:
+\begin{algorithm}
+\paragraph{}
+$J(\theta)$=$\dfrac{1}{m}$ $\sum\limits_{i=1}^{m}$ Cost($h_{\theta}$($x^{(i)}$),$y^{(i)}$)
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-log($h_{\theta}(x)$)\qquad if y=1
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-log(1-$h_{\theta}(x)$)\qquad if y=0
+\end{algorithm}
+\paragraph{}
+When y = 1, we get the following plot for $J(θ)$ vs $h_{\theta}(x)$:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{11.png}
+\newpage
+\paragraph{}
+Similarly, when y = 0, we get the following plot for $J(θ)$ vs $h_{\theta}(x)$:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{12.png}
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+Cost($h_{\theta}$(x),y)=0 \qquad if $h_{\theta}$(x)=y
+\paragraph{}
+Cost($h_{\theta}$(x),y) $\rightarrow$ $\infty$ \qquad if y=0 and $h_{\theta}$(x) $\rightarrow$ 1
+\paragraph{}
+Cost($h_{\theta}$(x),y) $\rightarrow$ $\infty$ \qquad if y=1 and $h_{\theta}$(x) $\rightarrow$ 0
+\end{algorithm}
+\paragraph{}
+If our correct answer 'y' is 0, then the cost function will be 0 if our hypothesis function also outputs 0. If our hypothesis approaches 1, then the cost function will approach infinity.
+\paragraph{}
+If our correct answer 'y' is 1, then the cost function will be 0 if our hypothesis function outputs 1. If our hypothesis approaches 0, then the cost function will approach infinity.
+\paragraph{}
+Note that writing the cost function in this way guarantees that $J(\theta)$ is convex for logistic regression.
+\newpage
+\section{Simplified Cost Function and Gradient Descent}
+\paragraph{}
+\textbf{Note:} [6:53 - the gradient descent equation should have a 1/m factor]
+\paragraph{}
+We can compress our cost function's two conditional cases into one case:
+\paragraph{}
+Cost($h_{\theta}$(x),y)=-y log($h_{\theta}$(x))-(1-y)log(1-$h_{\theta}$(x))
+\paragraph{}
+Notice that when y is equal to 1, then the second term (1−y)log(1−$h_{\theta}(x)$) will be zero and will not affect the result. If y is equal to 0, then the first term −ylog($h_{\theta}(x)$) will be zero and will not affect the result.
+\paragraph{}
+We can fully write out our entire cost function as follows:
+\begin{algorithm}
+J($\theta$)=-$\dfrac{1}{m}$ $\sum\limits_{i=1}^{m}$ [$y^{(i)}$log($h_{\theta}$($x^{(i)}$))+(1-$y^{(i)}$)log(1-$h_{\theta}(x^{(i)}$))]
+\end{algorithm}
+\paragraph{}
+A vectorized implementation is:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+h=g(X$\theta$)
+\paragraph{}
+J($\theta$)=$\dfrac{1}{m}$ $\cdot$ (-$y^{T}$log(h)-$(1-y)^{T}$log(1-h))
+\end{algorithm}
+\subsection{Gradient Descent}
+\paragraph{}
+Remember that the general form of gradient descent is:
+\begin{algorithm}
+\paragraph{}
+Repeat\{ 
+\paragraph{}
+
+$\theta_{j}$:=$\theta_{j}$-$\alpha$ $\dfrac{\partial}{\partial\theta_{j}}$ J($\theta$)
+\paragraph{}
+\}
+\end{algorithm}
+\paragraph{}
+We can work out the derivative part using calculus to get:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+Repeat\{ 
+\paragraph{}
+$\theta_{j}$:=$\theta_{j}$-$\dfrac{\alpha}{m}$ $\sum\limits_{i=1}^{m}$ ($h_{\theta}(x^{(i)})$-$y^{(i)}$)$x_{j}^{(i)}$
+\paragraph{}
+\}
+\end{algorithm}
+\paragraph{}
+Notice that this algorithm is identical to the one we used in linear regression. We still have to simultaneously update all values in theta.
+\paragraph{}
+A vectorized implementation is:
+\paragraph{}
+$\theta$:=$\theta$-$\dfrac{\alpha}{m}$ $X^{T}$ (g(X$\theta$)-$\vec{y}$)
+\newpage
+\section{Advanced Optimization}
+\paragraph{}
+\textbf{Note:}[7:35 - '100' should be 100 instead. The value provided should be an integer and not a character string.]
+\paragraph{}
+"Conjugate gradient", "BFGS", and "L-BFGS" are more sophisticated, faster ways to optimize θ that can be used instead of gradient descent. We suggest that you should not write these more sophisticated algorithms yourself (unless you are an expert in numerical computing) but use the libraries instead, as they're already tested and highly optimized. Octave provides them.
+\paragraph{}
+We first need to provide a function that evaluates the following two functions for a given input value θ:
+\paragraph{}
+J($\theta$)
+\paragraph{}
+$\dfrac{\partial}{\partial\theta_{j}}$ J($\theta$)
+\paragraph{}
+We can write a single function that returns both of these:
+\paragraph{}
+\begin{algorithm}
+\begin{minted}[linenos]{octave}
+function [jVal, gradient] = costFunction(theta)
+  jVal = [...code to compute J(theta)...];
+  gradient = [...code to compute derivative of J(theta)...];
+end
+\end{minted}
+\end{algorithm}
+\paragraph{}
+Then we can use octave's "fminunc()" optimization algorithm along with the "optimset()" function that creates an object containing the options we want to send to "fminunc()". (Note: the value for MaxIter should be an integer, not a character string - errata in the video at 7:30)
+\paragraph{}
+\begin{algorithm}
+\begin{minted}[linenos]{octave}
+options = optimset('GradObj', 'on', 'MaxIter', 100);
+initialTheta = zeros(2,1);
+   [optTheta, functionVal, exitFlag] = fminunc(@costFunction, initialTheta, options);
+\end{minted}
+\end{algorithm}
+\paragraph{}
+We give to the function "fminunc()" our cost function, our initial vector of theta values, and the "options" object that we created beforehand.
+\newpage
+\section{Multiclass Classification: One-vs-all}
+\paragraph{}
+Now we will approach the classification of data when we have more than two categories. Instead of y = {0,1} we will expand our definition so that y = {0,1...n}.
+\paragraph{}
+Since y = {0,1...n}, we divide our problem into n+1 (+1 because the index starts at 0) binary classification problems; in each one, we predict the probability that 'y' is a member of one of our classes.
+\begin{algorithm}
+y∈\{0,1...n\}
+\paragraph{}
+$h_{\theta}^{(0)}(x)$=P(y=0|x;θ)
+\paragraph{}
+$h_{\theta}^{(1)}(x)$=P(y=1|x;θ)
+\paragraph{}
+$\cdots$
+\paragraph{}
+$h_{\theta}^{(n)}(x)$=P(y=n|x;θ)
+\paragraph{}
+prediction=$\max \limits_{i}$($h_{\theta}^{(i)}(x)$)
+\end{algorithm}
+\paragraph{}
+We are basically choosing one class and then lumping all the others into a single second class. We do this repeatedly, applying binary logistic regression to each case, and then use the hypothesis that returned the highest value as our prediction.
+\paragraph{}
+The following image shows how one could classify 3 classes:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{13.png}
+\paragraph{}
+\textbf{To summarize:}
+\paragraph{}
+Train a logistic regression classifier $h_{\theta}(x)$ for each class￼ to predict the probability that ￼ ￼y = i￼ ￼.
+\paragraph{}
+To make a prediction on a new x, pick the class ￼that maximizes $h_{\theta}(x)$
+\newpage
+\section{The Problem of Overfitting}
+\paragraph{}
+Consider the problem of predicting y from x $\in$ R. The leftmost figure below shows the result of fitting a y = $\theta_{0}$+$\theta_{1}$x to a dataset. We see that the data doesn’t really lie on straight line, and so the fit is not very good.
+\paragraph{}
+\includegraphics[width = .6\textwidth]{14.png}
+\paragraph{}
+Instead, if we had added an extra feature $x^{2}$ , and fit y=$\theta_{0}$+$\theta_{1}$x+$\theta_{1}x^{2}$ , then we obtain a slightly better fit to the data (See middle figure). Naively, it might seem that the more features we add, the better. However, there is also a danger in adding too many features: The rightmost figure is the result of fitting a $5^{th}$ order polynomial y=$\sum_{j=0}^5$ $\theta_{j}$ $x^{j}$. We see that even though the fitted curve passes through the data perfectly, we would not expect this to be a very good predictor of, say, housing prices (y) for different living areas (x). Without formally defining what these terms mean, we’ll say the figure on the left shows an instance of \textbf{underfitting—}in which the data clearly shows structure not captured by the model—and the figure on the right is an example of \textbf{overfitting}.
+\paragraph{}
+Underfitting, or high bias, is when the form of our hypothesis function h maps poorly to the trend of the data. It is usually caused by a function that is too simple or uses too few features. At the other extreme, overfitting, or high variance, is caused by a hypothesis function that fits the available data but does not generalize well to predict new data. It is usually caused by a complicated function that creates a lot of unnecessary curves and angles unrelated to the data.
+\paragraph{}
+This terminology is applied to both linear and logistic regression. There are two main options to address the issue of overfitting:
+\paragraph{}
+1) Reduce the number of features:
+\paragraph{}
+$\bullet$\quad Manually select which features to keep.
+\paragraph{}
+$\bullet$\quad Use a model selection algorithm (studied later in the course).
+\paragraph{}
+2) Regularization
+\paragraph{}
+$\bullet$\quad Keep all the features, but reduce the magnitude of parameters $\theta_{j}$.
+\paragraph{}
+$\bullet$\quad Regularization works well when we have a lot of slightly useful features.
+\newpage
+\section{Cost Function}
+\paragraph{}
+\textbf{Note:} [5:18 - There is a typo. It should be $\sum_{j=1}^n$ $\theta_{j}^{2}$ instead of $\sum_{i=1}^n$ $\theta_{j}^{2}$]
+\paragraph{}
+If we have overfitting from our hypothesis function, we can reduce the weight that some of the terms in our function carry by increasing their cost.
+\paragraph{}
+Say we wanted to make the following function more quadratic:
+\paragraph{}
+$\theta_{0}+\theta_{1}x+\theta_{2}x^{2}+\theta_{3}x^{3}+\theta_{4}x^{4}$
+\paragraph{}
+We'll want to eliminate the influence of $\theta_{3}x^{3}$ and $\theta_{4}x^{4}$ . Without actually getting rid of these features or changing the form of our hypothesis, we can instead modify our cost function:
+\paragraph{}
+$\min \limits_{\theta}$ $\dfrac{1}{2m}$ $\sum_{i=1}^m$ $(h_{\theta}(x^{(i)})-y^{(i)})^{2}$+1000$\cdot$ $\theta_{3}^{2}$+1000$\cdot$ $\theta_{4}^{2}$
+\paragraph{}
+We've added two extra terms at the end to inflate the cost of $\theta_{3}$ and $\theta_{4}$. Now, in order for the cost function to get close to zero, we will have to reduce the values of $\theta_{3}$ and $\theta_{4}$ to near zero. This will in turn greatly reduce the values of $\theta_{3}$ $x^{3}$ and $\theta_{4}$ $x^{4}$ in our hypothesis function. As a result, we see that the new hypothesis (depicted by the pink curve) looks like a quadratic function but fits the data better due to the extra small terms $\theta_{3}$ $x^{3}$ and $\theta_{4}$ $x^{4}$.
+\paragraph{}
+\includegraphics[width = .6\textwidth]{15.png}
+\paragraph{}
+We could also regularize all of our theta parameters in a single summation as:
+\paragraph{}
+\begin{algorithm}
+$\min \limits_{\theta}$ $\dfrac{1}{2m}$ $\sum_{i=1}^m$ $(h_{\theta}(x^{(i)})-y^{(i)})^{2}$ +$\lambda$ $\sum_{j=1}^n$ $\theta_{j}^{2}$
+\end{algorithm}
+\paragraph{}
+The $\lambda$, or lambda, is the \textbf{regularization parameter}. It determines how much the costs of our theta parameters are inflated.
+\paragraph{}
+Using the above cost function with the extra summation, we can smooth the output of our hypothesis function to reduce overfitting. If lambda is chosen to be too large, it may smooth out the function too much and cause underfitting. Hence, what would happen if $\lambda$=0 or is too small ?
+\newpage
+\section{Regularized Linear Regression}
+\paragraph{}
+\textbf{Note:}[8:43 - It is said that X is non-invertible if m $\leq$ n. The correct statement should be that X is non-invertible if m $<$ n, and may be non-invertible if m = n.
+\paragraph{}
+We can apply regularization to both linear regression and logistic regression. We will approach linear regression first.
+\subsection{Gradient Descent}
+\paragraph{}
+We will modify our gradient descent function to separate out $\theta_{0}$ from the rest of the parameters because we do not want to penalize $\theta_{0}$.
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+Repeat\{
+\paragraph{}
+$\theta_{0}$:=$\theta_{0}$-$\alpha$ $\dfrac{1}{m}$ $\sum_{i=1}^m$ ($(h_{\theta}(x^{(i)})-y^{(i)}$) $x_{0}^{(i)}$
+\paragraph{}
+$\theta_{j}$:=$\theta_{j}$-$\alpha$ $\left[ \left( \dfrac{1}{m} \sum_{i=1}^m (h_{\theta}(x^{(i)})-y^{(i)}) x_{j}^{(i)} \right) +\dfrac{\lambda}{m} \theta_{j}\right]$
+\paragraph{}
+\}
+\end{algorithm}
+\paragraph{}
+The term $\dfrac{\lambda}{m}\theta_{j}$ performs our regularization. With some manipulation our update rule can also be represented as:
+\paragraph{}
+$\theta_{j}$:=$\theta_{j}$(1-$\alpha \dfrac{\lambda}{m}$)-$\alpha$ $\dfrac{1}{m}$ $\sum_{i=1}^m$ ($h_{\theta}(x^{(i)})$-$y^{(i)}$)$x_{j}^{(i)}$
+\paragraph{}
+The first term in the above equation, 1−$\alpha\dfrac{\lambda}{m}$ will always be less than 1. Intuitively you can see it as reducing the value of $\theta_{j}$ by some amount on every update. Notice that the second term is now exactly the same as it was before.
+\paragraph{}
+\textbf{Normal Equation}
+\paragraph{}
+Now let's approach regularization using the alternate method of the non-iterative normal equation.
+\paragraph{}
+To add in regularization, the equation is the same as our original, except that we add another term inside the parentheses:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$\theta$=$\left(X^{T}X+\lambda\cdot L \right)$ $X^{T}y$
+\paragraph{}
+\[ where \quad L=\begin{bmatrix}
+0\\
+&1\\
+&&1\\
+&&&\ddots\\
+&&&&1
+\end{bmatrix} \]
+\end{algorithm}
+\paragraph{}
+L is a matrix with 0 at the top left and 1's down the diagonal, with 0's everywhere else. It should have dimension (n+1)$\times$(n+1). Intuitively, this is the identity matrix (though we are not including $x_{0}$), multiplied with a single real number $\lambda.$
+\paragraph{}
+Recall that if m $<$ n, then $X^{T}X$ is non-invertible. However, when we add the term $\lambda \cdot L$, then $X^{T}X$ + $\lambda \cdot L$ becomes invertible.
+\newpage
+\section{Regularized Logistic Regression}
+\paragraph{}
+We can regularize logistic regression in a similar way that we regularize linear regression. As a result, we can avoid overfitting. The following image shows how the regularized function, displayed by the pink line, is less likely to overfit than the non-regularized function represented by the blue line:
+\includegraphics[width = .6\textwidth]{15.png}
+\subsection{Cost Function}
+\paragraph{}
+Recall that our cost function for logistic regression was:
+\paragraph{}
+\begin{algorithm}
+J($\theta$)=-$\dfrac{1}{m}$ $\sum_{i=1}^m$ $\left[y^{(i)}log(h_{\theta}(x^{(i)}))+(1-y^{(i)})log(1-h_{\theta}(x^{(i)}))\right]$+$\dfrac{\lambda}{2m}\sum_{j=1}^n \theta_{j}^{2}$
+\end{algorithm}
+\paragraph{}
+The second sum, $\sum_{j=1}^n \theta_{j}^{2}$ \textbf{means to explicitly exclude} the bias term, $\theta_{0}$. I.e. the θ vector is indexed from 0 to n (holding n+1 values, $\theta_{0}$ through $\theta_{n}$), and this sum explicitly skips $\theta_{0}$, by running from 1 to n, skipping 0. Thus, when computing the equation, we should continuously update the two following equations:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{16.png}
+\end{document}
