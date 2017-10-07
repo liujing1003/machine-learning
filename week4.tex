@@ -1,0 +1,355 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage[boxed]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage[boxed]{algorithm2e}
+\usepackage{minted}
+%可以用到的所有包
+
+\title{机器学习week3}
+\author{  }
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+\section{Model Representation I}
+\paragraph{}
+Let's examine how we will represent a hypothesis function using neural networks. At a very simple level, neurons are basically computational units that take inputs (\textbf{dendrites}) as electrical inputs (called "spikes") that are channeled to outputs (\textbf{axons}). In our model, our dendrites are like the input features $x_{1} \cdots x_{n}$, and the output is the result of our hypothesis function. In this model our $ x_{0} $ input node is sometimes called the "bias unit." It is always equal to 1. In neural networks, we use the same logistic function as in classification, $ \dfrac{1}{1+e^{-\theta^{T}x}} $, yet we sometimes call it a sigmoid (logistic) \textbf{activation} function. In this situation, our "theta" parameters are sometimes called "weights".
+\paragraph{}
+Visually, a simplistic representation looks like:
+\begin{algorithm}
+\begin{equation}
+\left[\begin{array}{c}
+x_{0}\\
+x_{1}\\
+x_{2}\\
+\end{array}\right] \rightarrow  [\qquad]
+\rightarrow h_{\theta}(x)
+\end{equation}
+\end{algorithm}
+\paragraph{}
+Our input nodes (layer 1), also known as the "input layer", go into another node (layer 2), which finally outputs the hypothesis function, known as the "output layer".
+\paragraph{}
+We can have intermediate layers of nodes between the input and output layers called the "hidden layers."
+\paragraph{}
+In this example, we label these intermediate or "hidden" layer nodes $a_{0}^{2} \cdots a_{n}^{2}$ and call them "activation units."
+\begin{algorithm}
+$a_{i}^{(j)}$="activation" of unit i in layer j
+\paragraph{}
+$\Theta^{j}$=matrix of weights controlling function mapping from layer j to layer j+1
+\paragraph{}
+If we had one hidden layer,it would look like:
+\end{algorithm}
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+\left[\begin{array}{l}
+x_{0}\\
+x_{1}\\
+x_{2}\\
+x_{3}\\
+\end{array}\right]\rightarrow\left[\begin{array}{l}
+a_{1}^{(2)}\\
+a_{2}^{(2)}\\
+a_{3}^{(2)}\\
+\end{array}\right]\rightarrow
+h_{\theta}(x)
+\end{equation}
+\end{algorithm}
+\paragraph{}
+The values for each of the "activation" nodes is obtained as follows:
+\begin{algorithm}
+\paragraph{}
+$a_{1}^{(2)}=g(\Theta_{10}^{(1)}x_{0}+\Theta_{11}^{(1)}x_{1}+\Theta_{12}^{(1)}x_{2}+\Theta_{13}^{(1)}x_{3})$
+\paragraph{}
+$a_{2}^{(2)}=g(\Theta_{20}^{(1)}x_{0}+\Theta_{21}^{(1)}x_{1}+\Theta_{22}^{(1)}x_{2}+\Theta_{23}^{(1)}x_{3})$
+\paragraph{}
+$a_{3}^{(2)}=g(\Theta_{30}^{(1)}x_{0}+\Theta_{31}^{(1)}x_{1}+\Theta_{32}^{(1)}x_{2}+\Theta_{33}^{(1)}x_{3})$
+\paragraph{}
+$h_{\Theta}(x)=a_{1}^{(3)}=g(\Theta_{10}^{(2)}a_{0}^{(2)}+\Theta_{11}^{(2)}a_{1}^{(2)}+\Theta_{12}^{(2)}a_{2}^{(2)}+\Theta_{13}^{(2)}a_{3}^{(2)})$
+\end{algorithm}
+\paragraph{}
+This is saying that we compute our activation nodes by using a 3×4 matrix of parameters. We apply each row of the parameters to our inputs to obtain the value for one activation node. Our hypothesis output is the logistic function applied to the sum of the values of our activation nodes, which have been multiplied by yet another parameter matrix $ \Theta^{(2)} $ containing the weights for our second layer of nodes.
+\paragraph{}
+Each layer gets its own matrix of weights, $\Theta^{(j)}$.
+\paragraph{}
+The dimensions of these matrices of weights is determined as follows:
+\paragraph{}
+The dimensions of these matrices of weights is determined as follows
+:
+\paragraph{}
+\textbf{If network has $s_{j}$ units in layer j and $s_{j+1}$ units in layer j+1, then $ \Theta^{(j)} $ will be of dimension $ s_{j+1}\times(s_{j}+1) $.}
+\paragraph{}
+The +1 comes from the addition in $\Theta^{(j)}$ of the "bias nodes," $x_{0}$ and $\Theta_{0}^{(j)}$. In other words the output nodes will not include the bias nodes while the inputs will. The following image summarizes our model representation:
+\paragraph{}
+\includegraphics[width = .8\textwidth]{21.png}
+\paragraph{}
+Example: If layer 1 has 2 input nodes and layer 2 has 4 activation nodes. Dimension of $\Theta^{(1)}$ is going to be 4×3 where $s_{j}$=2 and $s_{(j+1)}$=4, so $s_{j+1}$×($s_{j}$+1)=4×3.
+\newpage
+\section{Model Representation II}
+\paragraph{}
+To re-iterate, the following is an example of a neural network:
+\begin{algorithm}
+\paragraph{}
+$a_{1}^{(2)}=g(\Theta_{10}^{(1)}x_{0}+\Theta_{11}^{(1)}x_{1}+\Theta_{12}^{(1)}x_{2}+\Theta_{13}^{(1)}x_{3})$
+\paragraph{}
+$a_{2}^{(2)}=g(\Theta_{20}^{(1)}x_{0}+\Theta_{21}^{(1)}x_{1}+\Theta_{22}^{(1)}x_{2}+\Theta_{23}^{(1)}x_{3})$
+\paragraph{}
+$a_{3}^{(2)}=g(\Theta_{30}^{(1)}x_{0}+\Theta_{31}^{(1)}x_{1}+\Theta_{32}^{(1)}x_{2}+\Theta_{33}^{(1)}x_{3})$
+\paragraph{}
+$h_{\Theta}(x)=a_{1}^{(3)}=g(\Theta_{10}^{(2)}a_{0}^{(2)}+\Theta_{11}^{(2)}a_{1}^{(2)}+\Theta_{12}^{(2)}a_{2}^{(2)}+\Theta_{13}^{(2)}a_{3}^{(2)})$
+\end{algorithm}
+\paragraph{}
+In this section we'll do a vectorized implementation of the above functions. We're going to define a new variable $ z_{k}^{(j)} $ that encompasses the parameters inside our g function. In our previous example if we replaced by the variable z for all the parameters we would get:
+\begin{algorithm}
+\paragraph{}
+$ a_{1}^{(2)} =g(z_{1}^{(2)})$
+\paragraph{}
+$ a_{2}^{(2)} =g(z_{2}^{(2)})$
+\paragraph{}
+$ a_{3}^{(2)} =g(z_{3}^{(2)})$
+\end{algorithm}
+\paragraph{}
+In other words, for layer j=2 and node k, the variable z will be:
+\begin{algorithm}
+$ z_{k}^{(2)}=\Theta_{k,0}^{(1)}x_{0}+ \Theta_{k,1}^{(1)}x_{1}+\cdots+\Theta_{k,n}^{(1)}x_{n}$
+\end{algorithm}
+\paragraph{}
+The vector representation of x and $z^{j}$ is:
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+x=\left[\begin{array}{c}
+x_{0}\\
+x_{1}\\
+\cdots\\
+x_{n}\\
+\end{array}\right] z^{(j)}=\left[\begin{array}{c}
+z_{1}^{(j)}\\
+z_{2}^{(j)}\\
+\cdots\\
+z_{n}^{(j)}\\
+\end{array}\right]
+\end{equation}
+\end{algorithm}
+\newpage
+\paragraph{}
+Setting x=$a_{(1)}$, we can rewrite the equation as:
+\paragraph{}
+\begin{algorithm}
+$z^{(j)}=\Theta^{(j-1)} a^{(j-1)}$
+\end{algorithm}
+\paragraph{}
+We are multiplying our matrix $\Theta^{(j-1)}$ with dimensions $s_{j}×(n+1)$ (where $s_{j}$ is the number of our activation nodes) by our vector $a^{(j−1)}$ with height (n+1). This gives us our vector $z^{(j)}$ with height $s_{j}$. Now we can get a vector of our activation nodes for layer j as follows:
+\paragraph{}
+$a^{(j)}=g(z^{(j)})$
+\paragraph{}
+Where our function g can be applied element-wise to our vector $z^{(j)}$.
+\paragraph{}
+We can then add a bias unit (equal to 1)to layer j after we have computed $a^{(j)}$.This will be element $a_{0}^{(j)}$and will be equal to 1.To compute our final hypothesis,let's first compute another z vector:
+\paragraph{}
+$z^{(j+1)}=\Theta^{(j)}a^{(j)}$
+\paragraph{}
+We get this final z vector by multiplying the next theta matrix after $\Theta^{(j-1)}$ with the values of all the activation nodes we just got.This last theta matrix $\Theta^{(j)}$will have only \textbf{one row} which is multiplied by one column $a^{(j)}$so that our result is a single number.We then get our final result with:
+\paragraph{}
+$h_{\Theta}(x)=a^{(j+1)}=g(z^{(j+1)})$
+\paragraph{}
+Notice that in this \textbf{last step},between layer j and layer j+1,we are doing \textbf{exactly the same thing}as we did in logistic regression.Adding all these intermediate layers in neural networks allows us to more elegantly produce interesting and more complex non-linear hypotheses.
+\newpage
+\section{Examples and Intuitions I}
+\paragraph{}
+A simple example of applying neural networks is by predicting $x_{1}$ AND $x_{2}$, which is the logical 'and' operator and is only true if both $x_{1}$ and $x_{2}$ are 1.
+\paragraph{}
+The graph of our functions will look like:
+\begin{algorithm}
+\begin{equation}
+\left[\begin{array}{c}
+x_{0}\\
+x_{1}\\
+x_{2}\\
+\end{array}\right] \rightarrow  [g(z^{(2)})]
+\rightarrow h_{\theta}(x) 
+\end{equation}
+\end{algorithm}
+\paragraph{}
+Remember that $x_{0}$ is our bias variable and is always 1.
+\paragraph{}
+Let's set our first theta matrix as:
+\begin{algorithm}
+$\Theta^{(1)}=[-30\quad20\quad20]$
+\end{algorithm}
+\paragraph{}
+This will cause the output of our hypothesis to only be positive if both $x_{1}$ and $x_{2}$are 1.
+\paragraph{}
+In other words:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$h_{\Theta}(x)=g(-30+20x_{1}+20x_{2})$
+\paragraph{}
+$x_{1}=0 \quad and \quad x_{2}=0 \quad then \quad g(-30)\approx0$
+\paragraph{}
+$x_{1}=0 \quad and \quad x_{2}=1 \quad then \quad g(-10)\approx0$
+\paragraph{}
+$x_{1}=1 \quad and \quad x_{2}=0 \quad then \quad g(-10)\approx0$
+\paragraph*{}
+$x_{1}=0 \quad and \quad x_{2}=1 \quad then \quad g(10)\approx1$
+\end{algorithm}
+\paragraph{}
+So we have constructed one of the fundamental operations in computers by using a small neural network rather than using an actual AND gate. Neural networks can also be used to simulate all the other logical gates. The following is an example of the logical operator 'OR', meaning either $x_{1}$ is true or $x_{2}$ is true, or both:
+\paragraph{}
+\includegraphics[width = .8\textwidth]{22.png}
+\newpage
+\section{Examples and Intuitions II}
+\paragraph{}
+The $\Theta^{(1)}$ matrices for AND,NOR,and OR are:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+AND:
+\paragraph{}
+\quad  $\Theta^{(1)}=[-30 \quad 20 \quad 20]$
+\paragraph{}
+NOR:
+\paragraph{}
+\quad   $\Theta^{(1)}=[10 \quad -20 \quad -20]$
+\paragraph{}
+OR:
+\paragraph{}
+\quad    $\Theta^{(1)}=[-10 \quad 20 \quad 20]$
+\end{algorithm}
+\paragraph{}
+We can combine these to get the XNOR logical operator(which gives 1 if $x_{1}$ and $x_{2}$ are both 0 or both 1). 
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+\left[\begin{array}{c}
+x_{0}\\
+x_{1}\\
+x_{2}\\
+\end{array}\right] \rightarrow  [a^{(3)}]
+\rightarrow h_{\Theta}(x) 
+\end{equation}
+\end{algorithm}
+\paragraph{}
+For the transition between the first and second layer, we'll use a $\Theta^{(1)}$ matrix that combines the values for AND and NOR:
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+\Theta^{(1)}=\left[\begin{array}{ccc}
+-30&20&20\\
+10&-20&-20\\
+\end{array}\right]
+\end{equation}
+\end{algorithm}
+\paragraph{}
+For the transition between the second and third layer, we'll use a $\Theta^{(2)}$ matrix that uses the value for OR:
+\begin{algorithm}
+$\Theta^{(2)}=[-10 \quad 20 \quad 20]$
+\end{algorithm}
+\newpage
+\paragraph{}
+Let's write out the values for all our nodes:
+\paragraph{}
+\begin{algorithm}
+\paragraph{}
+$a^{(2)}=g(\Theta^{(1)} \cdot x)$
+\paragraph{}
+$a^{(3)}=g(\Theta^{(2)} \cdot x)$
+\paragraph{}
+$h_{\Theta}(x)=a^{(3)}$
+\end{algorithm}
+\paragraph{}
+And there we have the XNOR operator using a hidden layer with two nodes! The following summarizes the above algorithm:
+\paragraph{}
+\includegraphics[width = .8\textwidth]{23.png}
+\newpage
+\section{Multiclass Classification}
+\paragraph{}
+To classify data into multiple classes, we let our hypothesis function return a vector of values. Say we wanted to classify our data into one of four categories. We will use the following example to see how this classification is done. This algorithm takes as input an image and classifies it accordingly:
+\includegraphics[width = .8\textwidth]{24.png}
+\paragraph{}
+we can define our set of resulting classes as y:
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+y^{(i)}=\left[\begin{array}{c}
+1\\
+0\\
+0\\
+0\\
+\end{array}\right],\left[\begin{array}{c}
+0\\
+1\\
+0\\
+0\\
+\end{array}\right],\left[\begin{array}{c}
+0\\
+0\\
+1\\
+0\\
+\end{array}\right],\left[\begin{array}{c}
+0\\
+0\\
+0\\
+1\\
+\end{array}\right],
+\end{equation}
+\end{algorithm}
+\paragraph{}
+Each $y^{(i)}$ represents a different image corresponding to either a car, pedestrian, truck, or motorcycle. The inner layers, each provide us with some new information which leads to our final hypothesis function. The setup looks like:
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+\left[\begin{array}{c}
+x_{0}\\
+x_{1}\\
+x_{2}\\
+\cdots\\
+x_{n}\\
+\end{array}\right]\rightarrow\left[\begin{array}{c}
+a_{0}^{(2)}\\
+a_{1}^{(2)}\\
+a_{2}^{(2)}\\
+\cdots\\
+\end{array}\right]\rightarrow
+\left[\begin{array}{c}
+a_{0}^{(3)}\\
+a_{1}^{(3)}\\
+a_{2}^{(3)}\\
+\cdots\\
+\end{array}\right]\rightarrow
+\cdots\rightarrow\left[\begin{array}{c}
+h_{\Theta}(x)_{1}\\
+h_{\Theta}(x)_{2}\\
+h_{\Theta}(x)_{3}\\
+h_{\Theta}(x)_{4}\\
+\end{array}\right]
+\end{equation}
+\end{algorithm}
+\paragraph{}
+Our resulting hypothesis for one set of inputs may look like:
+\paragraph{}
+\begin{algorithm}
+\begin{equation}
+h_{\Theta}(x)=\left[\begin{array}{c}
+0\\
+0\\
+1\\
+0\\
+\end{array}\right]
+\end{equation}
+\end{algorithm}
+\paragraph{}
+In which case our resulting class is the third one down,or $h_{\Theta}(x)_{3}$,which represents the motorcycle.
+\end{document}
+
