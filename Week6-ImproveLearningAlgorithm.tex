@@ -1,0 +1,167 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage[boxed]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage[boxed]{algorithm2e}
+\usepackage{minted}
+%可以用到的所有包
+
+\title{机器学习week6}
+\author{  }
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+\section{Evaluating a Hypothesis}
+\paragraph{}
+Once we have done some trouble shooting for errors in our predictions by:
+\paragraph{}
+$\bullet$ Getting more training examples
+\paragraph{}
+$\bullet$ Trying smaller sets of features
+\paragraph{}
+$\bullet$ Trying additional features
+\paragraph{}
+$\bullet$ Trying polynomial features
+\paragraph{}
+$\bullet$ Increasing or decreasing λ
+\paragraph{}
+We can move on to evaluate our new hypothesis.
+\paragraph{}
+A hypothesis may have a low error for the training examples but still be inaccurate (because of overfitting). Thus, to evaluate a hypothesis, given a dataset of training examples, we can split up the data into two sets: a training set and a test set. Typically, the training set consists of $70\%$ of your data and the test set is the remaining $30\%$.
+\paragraph{}
+The new procedure using these two sets is then:
+\paragraph{}
+1.Learn $\Theta$ and minimize $J_{train}(\Theta)$ using the training set
+\paragraph{}
+2.Compute the test set error $J_{test}(\Theta)$
+\section{The test set error}
+1.For linear regression:$J_{test}(\Theta) = \dfrac{1}{2m_{test}} \sum_{i=1}^{m_{test}}(h_\Theta(x^{(i)}_{test}) - y^{(i)}_{test})^2$
+\paragraph{}
+2.For classification ~ Misclassification error (aka 0/1 misclassification error):
+\paragraph{}
+\begin{algorithm}
+$err(h_\Theta(x),y) = \left\{\begin{array}{cc}1 & \mbox{if } h_\Theta(x) \geq 0.5\ and\ y = 0\ or\ h_\Theta(x) < 0.5\ and\ y = 1\\0 &  otherwise 
+\end{array}\right. $\end{algorithm}
+\paragraph{}
+This gives us a binary 0 or 1 error result based on a misclassification. The average test error for the test set is:
+\paragraph{}
+$\text{Test Error} = \dfrac{1}{m_{test}} \sum^{m_{test}}_{i=1} err(h_\Theta(x^{(i)}_{test}), y^{(i)}_{test})$
+\paragraph{}
+This gives us the proportion of the test data that was misclassified.
+\section{Diagnosing Bias vs. Variance}
+\paragraph{}
+In this section we examine the relationship between the degree of the polynomial d and the underfitting or overfitting of our hypothesis.
+\paragraph{}
+$\bullet$We need to distinguish whether bias or variance is the problem contributing to bad predictions.
+\paragraph{}
+$\bullet$High bias is underfitting and high variance is overfitting. Ideally, we need to find a golden mean between these two.
+\paragraph{}
+The training error will tend to decrease as we increase the degree d of the polynomial.
+\paragraph{}
+At the same time, the cross validation error will tend to decrease as we increase d up to a point, and then it will increase as d is increased, forming a convex curve.
+\paragraph{}
+High bias (underfitting): both $J_{train}(\Theta)$ and $J_{CV}(\Theta)$ will be high.Also$J_{CV}(\Theta) \approx J_{train}(\Theta)$.
+\paragraph{}
+High variance (overfitting):$J_{train}(\Theta)$ will be low and $J_{CV}(\Theta)$ will be much greater than $J_{train}(\Theta)$.
+\paragraph{}
+The is summarized in the figure below:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{CostJ.png}
+\section{Learning Curves}
+\paragraph{}
+Training an algorithm on a very few number of data points (such as 1, 2 or 3) will easily have 0 errors because we can always find a quadratic curve that touches exactly those number of points. Hence:
+\paragraph{}
+$\bullet$As the training set gets larger, the error for a quadratic function increases.
+\paragraph{}
+$\bullet$The error value will plateau out after a certain m, or training set size.
+\paragraph{}
+Experiencing high bias:
+\paragraph{}
+Low training set size: causes $J_{train}(\Theta)$ to be low and $J_{CV}(\Theta)$ to be high.
+\paragraph{}
+Large training set size: causes both $J_{train}(\Theta)$ and $J_{CV}(\Theta)$ to be high with $J_{train}(\Theta) \approx J_{CV}(\Theta)$
+\paragraph{}
+If a learning algorithm is suffering from $\textbf{bias}$, getting more training data will not $\textbf{(by itself)}$ help much.
+\paragraph{}
+\includegraphics[width = .6\textwidth]{TypicalLearningCurveForHighBias.png}
+\paragraph{}
+Experiencing high variance:
+\paragraph{}
+$\textbf{Low training set size:}$ $J_{train}(\Theta)$will be low and $J_{CV}(\Theta)$will be high.
+\paragraph{}
+$\textbf{Large training set size}:$ $J_{train}(\Theta)$increase with training set size and $J_{CV}(\Theta)$continues to decrease without leveling off.Also,$J_{train}(\Theta)$ $<$ $J_{CV}(\Theta)$ but the difference between them remains significant.
+\paragraph{}
+If a learning algorithm is suffering from $\textbf{high variance}$, getting more training data is likely to help.
+\includegraphics[width = .6\textwidth]{TypicalLearningCurveForHighVariance.png}
+\section{Deciding What to Do Next Revisited}
+\paragraph{}
+Our decision process can be broken down as follows:
+\paragraph{}
+$\bullet$ $\textbf{Getting more training examples:}$Fixes high varianvce
+\paragraph{}
+$\bullet$ $\textbf{Trying smaller sets of features:}$Fixes high variance
+\paragraph{}
+$\bullet$ $\textbf{Adding features:}$Fixes high bias
+\paragraph{}
+$\bullet$ $\textbf{Adding polynomial features:}$Fixes high bias
+\paragraph{}
+$\bullet$ \textbf{ Decreasing $\lambda$:}Fixes high bias
+\paragraph{}
+$\bullet$ \textbf{Increasing $\lambda$:}Fixes high variance.
+\subsection{Diagnosing Neural Networks}
+\paragraph{}
+$\bullet$A neural network with fewer parameters is $\textbf{prone to underfitting.}$It is also $\textbf{computationally cheaper.}$
+\paragraph{}
+$\bullet$A neural network with more parameters is $\textbf{prone to overfitting.}$It is also $\textbf{computationally expensive.}$In this case you can use regularization (increase $\lambda$) to address the overfitting.
+\paragraph{}
+Using a single hidden layer is a good starting default. You can train your neural network on a number of hidden layers using your cross validation set. You can then select the one that performs best.
+\subsection{Model Complexity Effects:}
+\paragraph{}
+$\bullet$Lower-order polynomials (low model complexity) have high bias and low variance. In this case, the model fits poorly consistently.
+\paragraph{}
+$\bullet$Higher-order polynomials (high model complexity) fit the training data extremely well and the test data extremely poorly. These have low bias on the training data, but very high variance.
+\paragraph{}
+$\bullet$In reality, we would want to choose a model somewhere in between, that can generalize well but also fits the data reasonably well.
+\section{Prioritizing What to Work On}
+\paragraph{}
+\textbf{System Design Example:}
+\paragraph{}
+Given a data set of emails, we could construct a vector for each email. Each entry in this vector represents a word. The vector normally contains 10,000 to 50,000 entries gathered by finding the most frequently used words in our data set. If a word is to be found in the email, we would assign its respective entry a 1, else if it is not found, that entry would be a 0. Once we have all our x vectors ready, we train our algorithm and finally, we could use it to classify if an email is a spam or not.
+\paragraph{}
+\includegraphics[width = .6\textwidth]{BuildingASpamClassifier.png}
+\paragraph{}
+So how could you spend your time to improve the accuracy of this classifier?
+\paragraph{}
+$\bullet$Collect lots of data (for example "honeypot" project but doesn't always work)
+\paragraph{}
+$\bullet$Develop sophisticated features (for example: using email header data in spam emails)
+\paragraph{}
+$\bullet$Develop algorithms to process your input in different ways (recognizing misspellings in spam).
+\paragraph{}
+It is difficult to tell which of the options will be most helpful.
+\section{Error Analysis}
+\paragraph{}
+The recommended approach to solving machine learning problems is to:
+\paragraph{}
+$\bullet$Start with a simple algorithm, implement it quickly, and test it early on your cross validation data.
+\paragraph{}
+$\bullet$ Plot learning curves to decide if more data, more features, etc. are likely to help.
+\paragraph{}
+$\bullet$Manually examine the errors on examples in the cross validation set and try to spot a trend where most of the errors were made.
+\paragraph{}
+For example, assume that we have 500 emails and our algorithm misclassifies a 100 of them. We could manually analyze the 100 emails and categorize them based on what type of emails they are. We could then try to come up with new cues and features that would help us classify these 100 emails correctly. Hence, if most of our misclassified emails are those which try to steal passwords, then we could find some features that are particular to those emails and add them to our model. We could also see how classifying each word according to its root changes our error rate:
+\paragraph{}
+\includegraphics[width = .6\textwidth]{TheImportanceOfNumericalEvaluation}
+\paragraph{}
+It is very important to get error results as a single, numerical value. Otherwise it is difficult to assess your algorithm's performance. For example if we use stemming, which is the process of treating the same word with different forms (fail/failing/failed) as one word (fail), and get a 3\% error rate instead of 5\%, then we should definitely add it to our model. However, if we try to distinguish between upper case and lower case letters and end up getting a 3.2\% error rate instead of 3\%, then we should avoid using this new feature. Hence, we should try new things, get a numerical value for our error rate, and based on our result decide whether we want to keep the new feature or not.
+\end{document}
